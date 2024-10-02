@@ -9,6 +9,7 @@ FACES_DIR = './faces/'
 facesEncodings = []
 facesNames = []
 
+
 # Cargar las imágenes de las caras y sus codificaciones
 for fileName in os.listdir(FACES_DIR):
     image = cv2.imread(os.path.join(FACES_DIR, fileName))
@@ -18,6 +19,7 @@ for fileName in os.listdir(FACES_DIR):
     f_coding = face_recognition.face_encodings(image, known_face_locations=[(0, 150, 150, 0)])[0]
     facesEncodings.append(f_coding)
     facesNames.append(fileName.split(".")[0])
+
 
 # Inicializa la captura de video. Modificar indice segun la camara
 cap = cv2.VideoCapture(2)
