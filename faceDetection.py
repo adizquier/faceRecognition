@@ -6,6 +6,19 @@ IMG_DIR = './images/'
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 profileClassif = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
 
+def draw_detection(detection, dest_image):
+     '''
+     Método encargado de dibujar una detección
+
+     Args:
+          detection: Detección realizada
+          dest_image: Imagen destino sobre la que se dibujará
+     '''
+     if(detection is not None):
+          x, y, w, h = detection
+          color = (0, 255, 255)
+          stroke = 5
+          cv2.rectangle(dest_image, (x, y), (x + w, y + h), color, stroke)
 
 def select_biggest_detection(detections):
      '''
@@ -68,7 +81,7 @@ def detectRightProfile(image):
           image: Imagen sobre la cual se realizará la detección
      '''
      image = cv2.flip(image, 1)
-     
+
      profiles = profileClassif.detectMultiScale(image, 1.1, 5)
 
      prof = select_biggest_detection(profiles)
