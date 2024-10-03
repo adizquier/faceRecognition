@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from mainwindow import Ui_MainWindow
 import faceDetection as fd
-import faceRecognition as frec
+from faceRecognition import faceRecognition
 
 
 class Worker(QtCore.QThread):
@@ -72,9 +72,19 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer.timeout.connect(self.compute)
         self.timer.start(30)
 
-        self.rec = frec.faceRecognition()
+        self.addUser_buttom.clicked.connect(self.addNewUser)
+
+        self.recg = faceRecognition()
 
 
+    def addNewUser(self):
+        name = "Adrian"
+        surname = "Izquierdo Abril"
+        dni = ""
+        username = "adizquier"
+        gmail = ""
+
+        self.recg.addUser(name, surname, dni, username, gmail)
 
         
     def compute(self):
