@@ -2,7 +2,59 @@ from PySide2 import QtGui, QtWidgets, QtCore
 import numpy as np
 import cv2
 from mainwindow import Ui_MainWindow
-import face_recognition as frec
+import faceDetection as fd
+import faceRecognition as frec
+
+
+class Worker(QtCore.QThread):
+    """
+    Worker Thread para procesar frames mientras se sigue capturando video.
+    """
+    frame_processed = QtCore.Signal(np.ndarray)  # Señal para enviar el frame procesado de vuelta al MainWindow
+
+    def __init__(self):
+        super().__init__()
+        self._running = True
+        self.frame = None
+
+    def run(self):
+        """
+        Método principal del hilo para procesar los frames.
+        """
+        while self._running:
+            if self.frame is not None:
+                # Aquí puedes aplicar tu procesamiento en cada frame
+                processed_frame = self.process_frame(self.frame)
+
+                # Emite la señal con el frame procesado
+                self.frame_processed.emit(processed_frame)
+
+    def process_frame(self, frame):
+        """
+        Método que realiza el procesamiento de cada frame.
+        Por ejemplo, detección de rostros, filtros, etc.
+        """
+        gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Detección de rostros (ejemplo)
+        faces = fd.detect_faces(gray_image)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        
+        # Aquí podrías añadir más procesamiento como reconocimiento facial, filtros, etc.
+        return frame
+
+    def update_frame(self, frame):
+        """
+        Método para actualizar el frame que se debe procesar.
+        """
+        self.frame = frame
+
+    def stop(self):
+        """
+        Detener el hilo de procesamiento.
+        """
+        self._running = False
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -20,9 +72,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer.timeout.connect(self.compute)
         self.timer.start(30)
 
-        self.facesEncodings = []
-        self.facesNames = []
+        self.rec = frec.faceRecognition()
 
+
+
+        
     def compute(self):
 
         ret, capImage = self.cap.read()
