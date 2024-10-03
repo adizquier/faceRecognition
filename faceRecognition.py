@@ -43,9 +43,17 @@ class faceRecognition():
         
         return False
     
-    def addUser(self, name):
+    def addUser(self, name, surname, dni):
         '''
-        Método encargado de añadir a un usuario. Se encargará de obtener el frontal de la cara, el perfil derecho e izquierdo para 
-        posteriormente almacenarlos en el diccionario de Encodings con la clave que el usuario introduzca.
+        Método encargado de añadir a un nuevo usuario con el nombre, apellido y DNI
+        indicado por parametros. No contendrá características faciales hasta que el 
+        usuario las añada.
+
+        Args:
+            name: Nombre del jugador
+            surname: Apellidos del jugador
+            dni: DNI del jugador
         '''
-        newUser = player(name)
+        newUser = player(name, surname, dni)
+
+        self.players.append(newUser)
