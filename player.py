@@ -1,10 +1,12 @@
 
 class player():
-    def __init__(self, name = "", surname = "", dni = "") -> None:
+    def __init__(self, name = "", surname = "", dni = "", username = "", gmail = "") -> None:
 
         self.name = name
         self.surnames = surname
         self.DNI = dni
+        self.username = username
+        self.gmail = gmail
 
         self.frontal = None
         self.rightProfile = None
@@ -18,6 +20,12 @@ class player():
     
     def getDNI(self):
         return self.DNI
+    
+    def getUserName(self):
+        return self.username
+    
+    def getGmail(self):
+        return self.gmail
 
     def getEncoders(self) -> list:
         return (self.frontal, self.rightProfile, self.leftProfile)
