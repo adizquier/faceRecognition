@@ -35,17 +35,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.captureButton = QPushButton(self.centralwidget)
-        self.captureButton.setObjectName(u"captureButton")
+        self.identify_buttom = QPushButton(self.centralwidget)
+        self.identify_buttom.setObjectName(u"identify_buttom")
         sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.captureButton.sizePolicy().hasHeightForWidth())
-        self.captureButton.setSizePolicy(sizePolicy1)
-        self.captureButton.setCheckable(True)
-        self.captureButton.setChecked(True)
+        sizePolicy1.setHeightForWidth(self.identify_buttom.sizePolicy().hasHeightForWidth())
+        self.identify_buttom.setSizePolicy(sizePolicy1)
+        self.identify_buttom.setCheckable(True)
+        self.identify_buttom.setChecked(True)
 
-        self.horizontalLayout.addWidget(self.captureButton)
+        self.horizontalLayout.addWidget(self.identify_buttom)
 
         self.addUser_buttom = QPushButton(self.centralwidget)
         self.addUser_buttom.setObjectName(u"addUser_buttom")
@@ -54,6 +54,11 @@ class Ui_MainWindow(object):
         self.addUser_buttom.setCheckable(True)
 
         self.horizontalLayout.addWidget(self.addUser_buttom)
+
+        self.addFace_buttom = QPushButton(self.centralwidget)
+        self.addFace_buttom.setObjectName(u"addFace_buttom")
+
+        self.horizontalLayout.addWidget(self.addFace_buttom)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -84,7 +89,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.captureButton.setText(QCoreApplication.translate("MainWindow", u"Stop capture", None))
-        self.addUser_buttom.setText(QCoreApplication.translate("MainWindow", u"Detect face", None))
+        self.identify_buttom.setText(QCoreApplication.translate("MainWindow", u"Identify", None))
+        self.addUser_buttom.setText(QCoreApplication.translate("MainWindow", u"Add user", None))
+        self.addFace_buttom.setText(QCoreApplication.translate("MainWindow", u"Add face", None))
     # retranslateUi
 

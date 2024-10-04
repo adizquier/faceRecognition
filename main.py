@@ -1,9 +1,44 @@
 from PySide2 import QtGui, QtWidgets, QtCore
+from PySide2.QtWidgets import QDialog
+from inscripcionForm import Ui_Dialog
 import numpy as np
 import cv2
 from mainwindow import Ui_MainWindow
 import faceDetection as fd
 from faceRecognition import faceRecognition
+
+class inscripcionForm(QDialog, Ui_Dialog):
+    def __init__(self):
+        super(inscripcionForm, self).__init__()
+        self.setupUi(self)
+
+        self.faltanDatos.setVisible(False)
+
+        self.ingresarButtom.clicked.connect(self.getInformation)
+
+
+    def getInformation(self):
+        '''
+        Metodo encargado de recoger los datos del dialogo de inscripcion para poder añadir a un usuario.
+        En caso de haber algún campo nulo no se envian los datos, mostrando un mensaje para que el usuario
+        sepa que faltan datos y los pueda añadir.
+        '''
+        nombre = self.nombre.text()
+        apellidos = self.apellidos.text()
+        dni = self.dni.text()
+        usuario = self.usuario.text()
+        correo = self.correo.text()
+
+        if not nombre or not apellidos or not dni or not usuario or not correo:
+            self.faltanDatos.setVisible(True)
+        
+        else: 
+            self.hide()
+
+            return (nombre, apellidos, dni, usuario, correo)
+
+            
+
 
 
 class Worker(QtCore.QThread):
@@ -62,6 +97,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        self.inscripcionForm = inscripcionForm()
+
         self.cap = cv2.VideoCapture(2)
         self.colorImage = np.zeros((self.imageFrame.size().width(), self.imageFrame.size().height(),3), dtype = np.uint8)
         self.grayImage = np.zeros((self.imageFrame.size().width(), self.imageFrame.size().height()), dtype = np.uint8)
@@ -76,15 +113,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.recg = faceRecognition()
 
+        
+
 
     def addNewUser(self):
-        name = "Adrian"
-        surname = "Izquierdo Abril"
-        dni = ""
-        username = "adizquier"
-        gmail = ""
 
-        self.recg.addUser(name, surname, dni, username, gmail)
+        self.inscripcionForm.show()
+
+        self.inscripcionForm.exec_()
+
+        user_info = self.inscripcionForm.getInformation()
+
+        if user_info:
+            name, surname, dni, username, gmail = user_info
+            print(name)
+            self.recg.addUser(name, surname, dni, username, gmail)
+
 
         
     def compute(self):

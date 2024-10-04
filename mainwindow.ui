@@ -44,7 +44,7 @@
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <widget class="QPushButton" name="captureButton">
+         <widget class="QPushButton" name="identify_buttom">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -52,7 +52,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Stop capture</string>
+           <string>Identify</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -71,10 +71,17 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Detect face</string>
+           <string>Add user</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addFace_buttom">
+          <property name="text">
+           <string>Add face</string>
           </property>
          </widget>
         </item>
