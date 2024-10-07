@@ -1,8 +1,5 @@
 import cv2
 
-
-IMG_DIR = './images/'
-
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 profileClassif = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
 
@@ -27,6 +24,9 @@ def select_biggest_detection(detections):
 
      Args:
           detections: Lista que contiene todas las detecciones 
+     
+     Returns:
+          biggest: Detección más cercana a la cámara
      '''     
      maxArea = 0
      biggest = None
@@ -44,17 +44,24 @@ def detectFrontalFace(image):
 
      Args:
           image: Imagen sobre la cual se realizará la detección
+
+     Returns:
+          bigestFace: Frontal de la cara detectado más cercano a la cámara
+          None: Si no se ha detectado nada en el frame
      '''
 
      faces = faceClassif.detectMultiScale(image, 1.1, 5)
 
-     face = select_biggest_detection(faces)
-     x, y, w, h = face
+     if len(faces) != 0:
 
-     bigestFace = image[y:y + h, x:x + w]
-     bigestFace = cv2.resize(face, (150, 150))
+          face = select_biggest_detection(faces)
+          x, y, w, h = face
 
-     return bigestFace
+          bigestFace = image[y:y + h, x:x + w]
+
+          return bigestFace
+     
+     return None
 
 def detectLeftProfile(image):
      '''
@@ -62,16 +69,23 @@ def detectLeftProfile(image):
 
      Args:
           image: Imagen sobre la cual se realizará la detección
+     
+     Returns:
+          bigestProfile: Perfil izquierdo más cercano a la cámara
+          None: Si no se ha detectado nada sobre el frame
      '''
      profiles = profileClassif.detectMultiScale(image, 1.1, 5)
 
-     prof = select_biggest_detection(profiles)
-     x, y, w, h = prof
+     if len(profiles) != 0:
 
-     bigestProfile = image[y:y + h, x:x + w]
-     bigestProfile = cv2.resize(prof, (150, 150))   
+          prof = select_biggest_detection(profiles)
+          x, y, w, h = prof
 
-     return bigestProfile
+          bigestProfile = image[y:y + h, x:x + w]
+
+          return bigestProfile
+     
+     return None
 
 def detectRightProfile(image):
      '''
@@ -79,17 +93,24 @@ def detectRightProfile(image):
 
      Args:
           image: Imagen sobre la cual se realizará la detección
+
+     Returns:
+          bigestProfile: Perfil derecho más cercano a la cámara
+          None: Si no se ha detectado nada sobre el frame
      '''
      image = cv2.flip(image, 1)
 
      profiles = profileClassif.detectMultiScale(image, 1.1, 5)
 
-     prof = select_biggest_detection(profiles)
-     x, y, w, h = prof
+     if len(profiles) != 0:
 
-     bigestProfile = image[y:y + h, x:x + w]
-     bigestProfile = cv2.resize(prof, (150, 150))   
+          prof = select_biggest_detection(profiles)
+          x, y, w, h = prof
 
-     return bigestProfile
+          bigestProfile = image[y:y + h, x:x + w]
+
+          return bigestProfile
+     
+     return None
 
     
