@@ -1,11 +1,49 @@
 from PySide2 import QtGui, QtWidgets, QtCore
+from PySide2.QtWidgets import QWidget
 from PySide2.QtWidgets import QDialog
 from inscripcionForm import Ui_Dialog
+from identificationForm import Ui_Dialog as ui
+from salida import Ui_Form
 import numpy as np
 import cv2
 from mainwindow import Ui_MainWindow
 import faceDetection as fd
 from faceRecognition import faceRecognition
+
+class messageOut (QWidget, Ui_Form):
+    def __init__(self):
+        super(messageOut, self).__init__()
+        self.setupUi(self)
+
+        self.putImage()
+
+    def putImage(self):
+        x = QtGui.QPixmap("./xBad_icon.png").scaled(70,70)
+
+        self.texto.setWordWrap(True)
+        self.texto.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.imagen.setPixmap(x)
+        self.texto.setText("Usuario no identificado")
+
+class identificationForm(QDialog, ui):
+    def __init__(self):
+        super(identificationForm, self).__init__()  # Cambiado a identificationForm
+        self.setupUi(self)
+
+        self.faltanDatos.setVisible(False)
+        self.identificar_buttom.clicked.connect(self.getInformation)
+
+    def getInformation(self):
+        usuario = self.usuario.text()
+
+        if not usuario:
+            self.faltanDatos.setVisible(True)
+        else:
+            self.hide()
+            return (True, usuario)
+
+
 
 class inscripcionForm(QDialog, Ui_Dialog):
     def __init__(self):
@@ -51,33 +89,31 @@ class Worker(QtCore.QThread):
         super().__init__()
         self._running = True
         self.frame = None
+        self.process = False
+
+        self.processFrontal = False
+        self.processRightProfile = False
+        self.processLeftProfile = False
 
     def run(self):
         """
         Método principal del hilo para procesar los frames.
         """
         while self._running:
-            if self.frame is not None:
+            if self.frame is not None and self.process:
                 # Aquí puedes aplicar tu procesamiento en cada frame
-                processed_frame = self.process_frame(self.frame)
+                
 
                 # Emite la señal con el frame procesado
-                self.frame_processed.emit(processed_frame)
+                self.frame_processed.emit(self.frame)
 
-    def process_frame(self, frame):
-        """
-        Método que realiza el procesamiento de cada frame.
-        Por ejemplo, detección de rostros, filtros, etc.
-        """
-        gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Detección de rostros (ejemplo)
-        faces = fd.detect_faces(gray_image)
-        for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        
-        # Aquí podrías añadir más procesamiento como reconocimiento facial, filtros, etc.
-        return frame
+    def startProcess(self):
+        self.process = True
+
+    def endProcess(self):
+        self.process = False
+    
 
     def update_frame(self, frame):
         """
@@ -98,23 +134,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.inscripcionForm = inscripcionForm()
+        self.identificationForma = identificationForm()
+        self.messageOut = messageOut()
 
-        self.cap = cv2.VideoCapture(2)
+        self.cap = cv2.VideoCapture(0)
         self.colorImage = np.zeros((self.imageFrame.size().width(), self.imageFrame.size().height(),3), dtype = np.uint8)
         self.grayImage = np.zeros((self.imageFrame.size().width(), self.imageFrame.size().height()), dtype = np.uint8)
 
         self.imageVisor = np.zeros((self.imageFrame.size().width(), self.imageFrame.size().height(),3), dtype = np.uint8)
                 
+        self.worker = Worker()
+        self.worker.start()
+
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.compute)
         self.timer.start(30)
 
         self.addUser_buttom.clicked.connect(self.addNewUser)
+        self.addFace_buttom.clicked.connect(self.addFaceFeatures)
+
+        self.active_desactive_buttoms(False, (self.addFrontal_Buttom, self.addRight_buttom, self.addLeft_buttom))
 
         self.recg = faceRecognition()
 
         
-
+    def active_desactive_buttoms(self, flag, buttoms):
+        for bt in buttoms:
+            bt.setEnabled(flag)
+            bt.setVisible(flag)
 
     def addNewUser(self):
 
@@ -128,6 +175,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             name, surname, dni, username, gmail = user_info
             print(name)
             self.recg.addUser(name, surname, dni, username, gmail)
+
+
+    def addFaceFeatures(self):
+        self.identificationForma.show()
+        self.identificationForma.exec_()
+
+        introducido, usuario = self.identificationForma.getInformation()
+
+        if introducido:
+
+            idnt = self.recg.lookForPlayer(usuario)
+
+            if idnt:
+
+                self.active_desactive_buttoms(True, (self.addFrontal_Buttom, self.addRight_buttom, self.addLeft_buttom))
+
+            else:
+                self.messageOut.show()
+            
+
+
+
+            #self.worker.startProcess()
+
+            #if self.addFrontal_Buttom.isChecked():
+            
 
 
         
