@@ -17,7 +17,7 @@ class faceRecognition():
         Returns:
             f_coding: Encodings calculados para el rostro
         '''
-        f_coding = face_recognition.face_encodings(image, known_face_locations=[(0, 150, 150, 0)])[0]
+        f_coding = face_recognition.face_encodings(image)[0]
         
         return f_coding
     
@@ -110,3 +110,18 @@ class faceRecognition():
             if detection:
                 encoder = self.getNewEncoding(detection)
                 usuario.setLeftProfile(encoder)
+
+
+    def lookForPlayer(self, usuario):
+        '''
+        Método encargado de comprobar si un usuario, dado su nombre de usuario, se encuentra registrado o no.
+
+        Args:
+            usuario: Nombre de usuario del jugador
+        '''
+
+        for player in self.players:
+            if player.getUserName() == usuario:
+                return True
+            
+        return False
